@@ -1,6 +1,5 @@
 package climbway;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import pt.ulisboa.tecnico.learnjava.bank.domain.Account;
@@ -11,15 +10,10 @@ import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
-import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
-import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
 
 public class MVCPattern {
 
-	public Bank bank;
-
-	public static void main(String[] args)
-			throws BankException, AccountException, ClientException, SibsException, OperationException {
+	public static void main(String[] args) throws BankException, AccountException, ClientException {
 
 		Scanner s = new Scanner(System.in);
 
@@ -29,11 +23,11 @@ public class MVCPattern {
 
 		UserController controller = new UserController(model, view);
 
+		String input;
+
 		Services services = new Services();
 
 		Sibs sibs = new Sibs(100, services);
-
-		String input;
 
 		Bank bank = new Bank("CGC");
 
@@ -64,20 +58,11 @@ public class MVCPattern {
 		int code4 = model.associateMbway(Iban4, "927338098");
 		model.confirmMbway(String.valueOf(code4), "927338098");
 
-		model.transferMbway("967440681", "966906844", "50");
-
-		ArrayList<String> listFriends = new ArrayList<String>();
-
-		listFriends.add("966906844");
-		listFriends.add("964391860");
-		listFriends.add("927338098");
-
-		System.out.println(model.validateFriends(listFriends));
-		System.out.println(model.validateFriendsAccounts(listFriends, 100));
-
-		// System.out.println(services.getAccountByIban(targetIban).getBalance());
-
-		// System.out.println(services.getAccountByIban(sourceIban).getBalance());
+//		System.out.println(model.transferMbway("967440681", "966906844", "50"));
+//
+//		System.out.println(services.getAccountByIban(Iban1).getBalance());
+//
+//		System.out.println(services.getAccountByIban(Iban2).getBalance());
 
 		while (controller.isRunning()) {
 

@@ -37,7 +37,20 @@ public class UserView {
 		}
 	}
 
-	public void printUserFriends(int friends) {
+	public void printFriendsUser(int friend) {
+		if (friend == 1) {
+			System.out.println("This friend is not associated with MB WAY! Notify your friend!");
+		} else if (friend == 2) {
+			System.out.println("Oh no! Your friend does not have money to pay! Notify your friend!");
+		} else if (friend == 3) {
+			System.out.println(" Your friend was added to the list to split bill!");
+		} else if (friend == 4) {
+			System.out.println("Oh no! You can not add more friends!");
+		}
+	}
+
+	public void printMbwayUserSplitBill(int friends) {
+
 		System.out.println();
 	}
 

@@ -1,7 +1,5 @@
 package climbway;
 
-import java.util.ArrayList;
-
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
 
@@ -68,14 +66,22 @@ public class UserController {
 
 	}
 
-	private void userFriends(String[] userArgs) {
-		ArrayList<String> listFriends = new ArrayList<String>();
-		while (listFriends.size() <= 15 || (!userArgs.equals("splitbill-mbway"))) {
-			String phoneNumber = userArgs[1];
-			listFriends.add(phoneNumber);
-		}
-		view.printUserFriends(model.receiveListFriends(listFriends));
+	private void friendsUser(String[] userArgs) {
+		String phoneNumber = userArgs[1];
+		String Amount = userArgs[2];
+		view.printFriendsUser(model.friends(phoneNumber, Amount));
 	}
+
+//	private void mbwayUserSplitBill(String[] userArgs) {
+//		String numberFriends = userArgs[1];
+//		String billAmount = userArgs[2];
+//		ArrayList<String> friends = new ArrayList<String>();
+//		while ( || (!userArgs.equals("splitbill-mbway"))) {
+//			String phoneNumber = userArgs[3:];
+//			friends.add(phoneNumber);
+//		}
+//		view.printMbwayUserSplitBill(model.mbwaySplitBill(numberFriends, billAmount, friends));
+//	}
 
 	public void updateView() {
 		String[] userArgs = this.processInput(this.getUserInput());
@@ -100,8 +106,8 @@ public class UserController {
 			transferUserMbway(userArgs);
 			break;
 
-		case "splitbill-mbway":
-			splitBillUserMbway(userArgs);
+		case "friends-mbway":
+			friendsUser(userArgs);
 			break;
 
 		}
