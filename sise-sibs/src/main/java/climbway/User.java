@@ -2,6 +2,7 @@ package climbway;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
@@ -12,7 +13,7 @@ public class User {
 	String userInput;
 
 	HashMap<String, UserAccount> collection = new HashMap<String, UserAccount>();
-	ArrayList<String> friends = new ArrayList<String>();
+	ArrayList<Pair<String, Integer>> friends = new ArrayList<Pair<String, Integer>>();
 
 	Services services = new Services();
 	Sibs sibs = new Sibs(100, services);
@@ -35,7 +36,7 @@ public class User {
 	}
 
 	public int associateMbway(String iban, String phoneNumber) {
-		if ((iban != null) && (phoneNumber != null) && iban.length() == 6 && phoneNumber.length() == 9
+		if ((iban != null) && (phoneNumber != null) && iban.length() <= 7 && phoneNumber.length() == 9
 				&& phoneNumber.matches("[0-9]+")) {
 			if ((!collection.containsKey(phoneNumber))) {
 				UserAccount userAccount = new UserAccount();
@@ -97,8 +98,11 @@ public class User {
 		} else if ((services.getAccountByIban(collection.get(phoneNumber).getIban()).getBalance()) <= AmountInt) {
 			friend = 2;
 		} else {
-			if (friends.size() <= 15) {
-				friends.add(phoneNumber);
+			// according to MBWAY specifications you can only split bill atmost with 14
+			// friends . The first element of the list is the user, therefore the
+			// list has the maximum size of 15.
+			if (friends.size() < 15) {
+				friends.put(phoneNumber, Amount);
 				friend = 3;
 			} else {
 				friend = 4;
@@ -107,40 +111,34 @@ public class User {
 		return friend;
 	}
 
-	public boolean validateUser(String phoneNumber, int billAmountInt) {
-		if (collection.containsKey(phoneNumber)
-				&& (services.getAccountByIban(collection.get(phoneNumber).getIban()).getBalance() >= billAmountInt)) {
-			return true;
+	public void mbwaySplitBill(String numberFriends, String billAmount) {
+		int billAmountInt = Integer.parseInt(billAmount);
+		int numberFriendsInt = Integer.parseInt(numberFriends);
+		Set<String> friendsKeys = friends.keySet();
+		if (numberFriendsInt > friends.size()) {
+			System.out.println("Oh no! One friend is missing!");
+		} else if (numberFriendsInt < friends.size()) {
+			System.out.println("Oh no! Too many friends!");
 		} else {
-			return false;
-			// System.out.println("Oh no! you are not associated with MB WAY or you do not
-			// have money to pay!");
+			int i = 0;
+			for (i = 0; i < friendsKeys.size(); i++) {
+				try {
+					services.withdraw(collection.get(friendsKeys[i]).getIban(), friends.get());
+				} catch (Exception e) {
+				}
+
+			}
 		}
 	}
 
-//	public void mbwaySplitBill(String numberFriends, String billAmount, ArrayList friends) throws AccountException {
-//		int billAmountInt = Integer.parseInt(billAmount);
-//		int numberFriendsInt = Integer.parseInt(numberFriends);
-//		if (numberFriendsInt > friends.size()) {
-//			System.out.println("Oh no! One friend is missing!");
-//		} else if (numberFriendsInt < friends.size()) {
-//			System.out.println("Oh no! Too many friends!");
-//		} else {
-//			int amount = (billAmountInt / (1 + numberFriendsInt));
-//			if (validateFriends(friends) == true) {
-//				try {
-//					services.withdraw(collection.get(phoneNumber).getIban(), billAmountInt);
-//					int i = 0;
-//					for (i = 0; i < numberFriendsInt; i++) {
-//						sibs.transfer(collection.get(phoneNumber).getIban(), collection.get(friends.get(i)).getIban(),
-//								amount);
-//					}
-//				} catch (Exception e) {
-//					System.out.println("Something is wrong. Did you set the bill amount right?");
-//				}
-//			}
+//	services.withdraw(collection.get(phoneNumber).getIban(),billAmountInt);
 //
-//		}
-//
-//	}
+//	int i = 0;for(i=0;i<numberFriendsInt;i++)
+//	{
+//		sibs.transfer(collection.get(phoneNumber).getIban(), collection.get(friends.get(i)).getIban(), amount);
+//	}}catch(
+//	Exception e)
+//	{
+//		System.out.println("Something is wrong. Did you set the bill amount right?");
+
 }
