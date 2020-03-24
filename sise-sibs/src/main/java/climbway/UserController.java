@@ -72,16 +72,12 @@ public class UserController {
 		view.printFriendsUser(model.friends(phoneNumber, Amount));
 	}
 
-//	private void mbwayUserSplitBill(String[] userArgs) {
-//		String numberFriends = userArgs[1];
-//		String billAmount = userArgs[2];
-//		ArrayList<String> friends = new ArrayList<String>();
-//		while ( || (!userArgs.equals("splitbill-mbway"))) {
-//			String phoneNumber = userArgs[3:];
-//			friends.add(phoneNumber);
-//		}
-//		view.printMbwayUserSplitBill(model.mbwaySplitBill(numberFriends, billAmount, friends));
-//	}
+	private void mbwayUserSplitBill(String[] userArgs) {
+		String numberFriends = userArgs[1];
+		String billAmount = userArgs[2];
+
+		view.printMbwayUserSplitBill(model.mbwaySplitBill(numberFriends, billAmount));
+	}
 
 	public void updateView() {
 		String[] userArgs = this.processInput(this.getUserInput());
@@ -109,6 +105,10 @@ public class UserController {
 		case "friends-mbway":
 			friendsUser(userArgs);
 			break;
+			
+		case "mbway-split-bill":
+			mbwayUserSplitBill(userArgs);
+			break;	
 
 		}
 

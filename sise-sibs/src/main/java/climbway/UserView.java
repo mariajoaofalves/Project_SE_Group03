@@ -3,7 +3,7 @@ package climbway;
 public class UserView {
 
 	public void printExitMessage() {
-		System.out.println("You exited MB WAY. See you soon");
+		System.out.println("You exited MB WAY. See you soon!");
 	}
 
 	public void printAssociateUserMbway(int code) {
@@ -39,19 +39,30 @@ public class UserView {
 
 	public void printFriendsUser(int friend) {
 		if (friend == 1) {
-			System.out.println("This friend is not associated with MB WAY! Notify your friend!");
+			System.out.println("This friend is already listed, please try another friend");
 		} else if (friend == 2) {
-			System.out.println("Oh no! Your friend does not have money to pay! Notify your friend!");
+			System.out.println("This friend is not associated with MB WAY. Notify your friend!");
 		} else if (friend == 3) {
-			System.out.println(" Your friend was added to the list to split bill!");
+			System.out.println("Oh no! Your friend does not have money to pay. Notify your friend!");
 		} else if (friend == 4) {
-			System.out.println("Oh no! You can not add more friends!");
+			System.out.println("Your friend was added to the list to split the bill!");
+		} else if (friend == 5) {
+			System.out.println("Oh no! You can not add more friends.");
 		}
 	}
 
-	public void printMbwayUserSplitBill(int friends) {
-
-		System.out.println();
+	public void printMbwayUserSplitBill(int split) {
+		if (split == 1) {
+			System.out.println("Oh no! One friend is missing to split this bill!");
+		} else if (split == 2) {
+			System.out.println("Oh no! Too many friends were provided in your split-list!");
+		} else if (split == 3) {
+			System.out.println("Your bill was successfully splitted");
+		} else if (split == 4) {
+			System.out.println("One of the withdraws was not performed!");
+		} else if (split == 5) {
+			System.out.println("Something is wrong... Did you set the bill amount right?");
+		}
 	}
 
 }

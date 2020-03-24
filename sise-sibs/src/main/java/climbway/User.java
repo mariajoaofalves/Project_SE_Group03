@@ -1,8 +1,6 @@
 package climbway;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
@@ -13,7 +11,8 @@ public class User {
 	String userInput;
 
 	HashMap<String, UserAccount> collection = new HashMap<String, UserAccount>();
-	ArrayList<Pair<String, Integer>> friends = new ArrayList<Pair<String, Integer>>();
+	HashMap<String, String> friends = new HashMap<String, String>();
+	
 
 	Services services = new Services();
 	Sibs sibs = new Sibs(100, services);
@@ -93,52 +92,53 @@ public class User {
 
 		int AmountInt = Integer.parseInt(Amount);
 		int friend = 0;
-		if (!collection.containsKey(phoneNumber)) {
+		if(friends.get(phoneNumber) != null) {
 			friend = 1;
-		} else if ((services.getAccountByIban(collection.get(phoneNumber).getIban()).getBalance()) <= AmountInt) {
+		} else if (!collection.containsKey(phoneNumber)) {
 			friend = 2;
+		} else if ((services.getAccountByIban(collection.get(phoneNumber).getIban()).getBalance()) <= AmountInt) {
+			friend = 3;
 		} else {
-			// according to MBWAY specifications you can only split bill atmost with 14
-			// friends . The first element of the list is the user, therefore the
-			// list has the maximum size of 15.
-			if (friends.size() < 15) {
+			// according to MBWAY specifications you can only split bill with atmost 14
+			// friends. Having the user as the first element in the list, it has the maximum size of 15.
+			if (friends.size() < 5) {
 				friends.put(phoneNumber, Amount);
-				friend = 3;
-			} else {
 				friend = 4;
+			} else {
+				friend = 5;
 			}
 		}
 		return friend;
 	}
 
-	public void mbwaySplitBill(String numberFriends, String billAmount) {
+	public int mbwaySplitBill(String numberFriends, String billAmount) {
 		int billAmountInt = Integer.parseInt(billAmount);
 		int numberFriendsInt = Integer.parseInt(numberFriends);
-		Set<String> friendsKeys = friends.keySet();
+		int split = 0;
 		if (numberFriendsInt > friends.size()) {
-			System.out.println("Oh no! One friend is missing!");
+			split = 1;
 		} else if (numberFriendsInt < friends.size()) {
-			System.out.println("Oh no! Too many friends!");
-		} else {
-			int i = 0;
-			for (i = 0; i < friendsKeys.size(); i++) {
+			split = 2;
+		}else {
+			int total_fAmount = 0;
+			for(HashMap.Entry<String, String> entry : friends.entrySet()) {
+				int f_amount = Integer.parseInt(entry.getValue()); //returns amount assigned to each friend
+				total_fAmount += f_amount;
+			}
+			if(total_fAmount == billAmountInt) {
 				try {
-					services.withdraw(collection.get(friendsKeys[i]).getIban(), friends.get());
+					for (HashMap.Entry<String, String> entry : friends.entrySet()) {
+						int f_amount = Integer.parseInt(entry.getValue());
+						services.withdraw(collection.get(entry.getKey()).getIban(), f_amount);
+					}
+					split = 3; //withdraw was successful in every friends accounts
 				} catch (Exception e) {
+					split = 4; //one of the withdraws was unsuccessful
 				}
-
+			} else {
+				split = 5; //total_fAmount != billAmount
 			}
 		}
+		return split;
 	}
-
-//	services.withdraw(collection.get(phoneNumber).getIban(),billAmountInt);
-//
-//	int i = 0;for(i=0;i<numberFriendsInt;i++)
-//	{
-//		sibs.transfer(collection.get(phoneNumber).getIban(), collection.get(friends.get(i)).getIban(), amount);
-//	}}catch(
-//	Exception e)
-//	{
-//		System.out.println("Something is wrong. Did you set the bill amount right?");
-
 }
