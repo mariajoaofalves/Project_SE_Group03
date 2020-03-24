@@ -57,7 +57,7 @@ public class UserView {
 		} else if (split == 2) {
 			System.out.println("Oh no! Too many friends were provided in your split-list!");
 		} else if (split == 3) {
-			System.out.println("Your bill was successfully splitted");
+			System.out.println("Bill payed successefully!");
 		} else if (split == 4) {
 			System.out.println("One of the withdraws was not performed!");
 		} else if (split == 5) {
