@@ -1,5 +1,7 @@
 package climbway;
 
+import java.util.List;
+
 public class UserView {
 
 	public void printExitMessage() {
@@ -11,6 +13,8 @@ public class UserView {
 			System.out.println("Your phone number is already registered in MB WAY!");
 		} else if (code == 1) {
 			System.out.println("The phone number or Iban given are invalids. Please try again!");
+		} else if (code == 2) {
+			System.out.println("The Iban given is not associated to any account in the bank!");
 		} else {
 			System.out.println("Your code: " + code + " (don´t share this with anyone)!");
 		}
@@ -25,9 +29,11 @@ public class UserView {
 		}
 	}
 
-	public void printTransferUserMbway(int transfer) {
+	public void printTransferUserMbway(List list) {
+		int transfer = (int) list.get(0);
+		int balance = (int) list.get(1);
 		if (transfer == 1) {
-			System.out.println("Transfer performed successfully!");
+			System.out.println("Transfer performed successfully! Your current balance is " + balance + " euros.");
 		} else if (transfer == 2) {
 			System.out.println("Not enough money on the source account!");
 		} else if (transfer == 3) {

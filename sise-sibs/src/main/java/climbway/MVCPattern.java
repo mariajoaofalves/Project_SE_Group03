@@ -46,6 +46,7 @@ public class MVCPattern {
 		Client client13 = new Client(bank, "Patrícia", "Silva", "123453000", "927777777", "Street", 33);
 		Client client14 = new Client(bank, "Patocina", "Matos", "123456555", "921111111", "Street", 33);
 		Client client15 = new Client(bank, "Paula", "Bernardete", "123456111", "927333333", "Street", 33);
+		Client client16 = new Client(bank, "Paula", "Bernardete", "100000001", "927321113", "Street", 33);
 
 		String Iban1 = bank.createAccount(Bank.AccountType.CHECKING, client1, 100, 0);
 		String Iban2 = bank.createAccount(Bank.AccountType.CHECKING, client2, 100, 0);
@@ -62,6 +63,7 @@ public class MVCPattern {
 		String Iban13 = bank.createAccount(Bank.AccountType.CHECKING, client13, 100, 0);
 		String Iban14 = bank.createAccount(Bank.AccountType.CHECKING, client14, 100, 0);
 		String Iban15 = bank.createAccount(Bank.AccountType.CHECKING, client15, 100, 0);
+		String Iban16 = bank.createAccount(Bank.AccountType.CHECKING, client16, 100, 0);
 
 		Account account1 = services.getAccountByIban(Iban1);
 		Account account2 = services.getAccountByIban(Iban2);
@@ -78,6 +80,7 @@ public class MVCPattern {
 		Account account13 = services.getAccountByIban(Iban13);
 		Account account14 = services.getAccountByIban(Iban14);
 		Account account15 = services.getAccountByIban(Iban15);
+		Account account16 = services.getAccountByIban(Iban16);
 
 		int code1 = model.associateMbway(Iban1, "967440681");
 		model.confirmMbway(String.valueOf(code1), "967440681");
@@ -124,9 +127,21 @@ public class MVCPattern {
 		int code15 = model.associateMbway(Iban15, "927333333");
 		model.confirmMbway(String.valueOf(code15), "927333333");
 
-//	System.out.println(model.transferMbway("967440681", "966906844", "50"));
-//	System.out.println(services.getAccountByIban(Iban1).getBalance());
-//	System.out.println(services.getAccountByIban(Iban2).getBalance());
+//      System.out.println(model.transferMbway("967440681", "966906844", "50"));
+//		System.out.println(services.getAccountByIban(Iban16).getBalance());
+//		System.out.println(services.getAccountByIban(Iban1).getBalance());
+
+//		model.friends("967440681", "10");
+//		model.friends("966906844", "10");
+//		model.friends("964391860", "10");
+//		model.friends("927338098", "10");
+//
+//		model.mbwaySplitBill("4", "40");
+//
+//		System.out.println(services.getAccountByIban(Iban1).getBalance());
+//		System.out.println(services.getAccountByIban(Iban2).getBalance());
+//		System.out.println(services.getAccountByIban(Iban3).getBalance());
+//		System.out.println(services.getAccountByIban(Iban4).getBalance());
 
 		while (controller.isRunning()) {
 
