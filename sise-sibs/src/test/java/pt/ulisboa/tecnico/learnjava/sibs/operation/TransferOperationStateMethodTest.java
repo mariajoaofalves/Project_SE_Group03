@@ -94,11 +94,13 @@ public class TransferOperationStateMethodTest {
 		assertTrue(operation.getState() instanceof Cancelled);
 	}
 
+	@Test
 	public void TransferOperationStateDepositedCancel() throws OperationException, SibsException, AccountException { // different
 																														// Bank
 		TransferOperation operation = new TransferOperation(sourceIban, targetIban, 50);
 		assertTrue(operation.getState() instanceof Registered);
 		operation.process();
+		assertTrue(operation.getState() instanceof Withdrawn);
 		operation.process();
 		assertTrue(operation.getState() instanceof Deposited);
 		operation.cancel();

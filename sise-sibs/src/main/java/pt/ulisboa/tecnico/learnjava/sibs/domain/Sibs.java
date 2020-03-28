@@ -16,11 +16,11 @@ public class Sibs {
 
 	public void transfer(String sourceIban, String targetIban, int amount)
 			throws SibsException, AccountException, OperationException {
-		this.services.withdraw(sourceIban, amount);
-
-		this.services.deposit(targetIban, amount);
-
-		addOperation(Operation.OPERATION_TRANSFER, sourceIban, targetIban, amount);
+		if ((services.getAccountByIban(targetIban) != null) && (services.getAccountByIban(sourceIban) != null)) {
+			addOperation(Operation.OPERATION_TRANSFER, sourceIban, targetIban, amount);
+		} else {
+			throw new SibsException();
+		}
 	}
 
 	public int addOperation(String type, String sourceIban, String targetIban, int value)

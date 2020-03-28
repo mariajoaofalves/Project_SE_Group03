@@ -71,22 +71,6 @@ public class TransferMethodTest {
 		assertEquals(1, this.sibs.getNumberOfOperations());
 	}
 
-//	public void successMockito1()
-//			throws BankException, AccountException, ClientException, SibsException, OperationException {
-//		Services serviceMock = mock(Services.class);
-//		this.sibs = new Sibs(100, serviceMock);
-//
-//		String sourceIban = this.sourceBank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 1000, 0);
-//		String targetIban = this.targetBank.createAccount(Bank.AccountType.CHECKING, this.targetClient, 1000, 0);
-//
-//		this.sibs.transfer(sourceIban, targetIban, 100);
-//
-//		when(this.services.accountExists(sourceIban)).thenReturn(true);
-//		when(this.services.accountExists(sourceIban)).thenReturn(false);
-//		assertEquals(0, this.sibs.getNumberOfOperations());
-//
-//	}
-
 	@After
 	public void tearDown() {
 		Bank.clearBanks();
