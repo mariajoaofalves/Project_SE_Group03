@@ -1,12 +1,14 @@
 package pt.ulisboa.tecnico.learnjava.sibs.operation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import pt.ulisboa.tecnico.learnjava.sibs.domain.Operation;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
+import state.Registered;
 
 public class TransferOperationConstructorMethodTest {
 	String SOURCE_IBAN = "CGDCK1";
@@ -20,7 +22,7 @@ public class TransferOperationConstructorMethodTest {
 		assertEquals(100, operation.getValue());
 		assertEquals(this.SOURCE_IBAN, operation.getSourceIban());
 		assertEquals(this.TARGET_IBAN, operation.getTargetIban());
-		assertEquals("Registered", operation.getState());
+		assertTrue(operation.getState() instanceof Registered);
 	}
 
 	@Test(expected = OperationException.class)
