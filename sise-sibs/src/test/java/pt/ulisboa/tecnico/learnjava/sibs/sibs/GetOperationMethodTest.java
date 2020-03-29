@@ -29,7 +29,7 @@ public class GetOperationMethodTest {
 	}
 
 	@Test
-	public void success() throws SibsException {
+	public void success() throws SibsException, OperationException {
 		Operation operation = this.sibs.getOperation(0);
 
 		assertEquals(1, this.sibs.getNumberOfOperations());
@@ -38,12 +38,12 @@ public class GetOperationMethodTest {
 	}
 
 	@Test(expected = SibsException.class)
-	public void negativePosition() throws SibsException {
+	public void negativePosition() throws SibsException, OperationException {
 		this.sibs.getOperation(-1);
 	}
 
 	@Test(expected = SibsException.class)
-	public void positionAboveLength() throws SibsException {
+	public void positionAboveLength() throws SibsException, OperationException {
 		this.sibs.getOperation(4);
 	}
 

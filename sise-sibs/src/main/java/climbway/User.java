@@ -82,6 +82,7 @@ public class User {
 				try {
 					sibs.transfer(collection.get(sourcePhoneNumber).getIban(),
 							collection.get(targetPhoneNumber).getIban(), amountInt);
+					sibs.processOperations();
 					transfer = 1; // success transfer
 					balance = services.getAccountByIban(collection.get(sourcePhoneNumber).getIban()).getBalance();
 				} catch (Exception e) {

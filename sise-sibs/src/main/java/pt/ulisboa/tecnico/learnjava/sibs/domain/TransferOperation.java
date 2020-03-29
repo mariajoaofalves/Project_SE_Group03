@@ -64,11 +64,11 @@ public class TransferOperation extends Operation {
 		currentState = state;
 	}
 
-	public void process() throws AccountException {
+	public void process() throws AccountException, OperationException {
 		currentState.process(this);
 	}
 
-	public void cancel() throws AccountException {
+	public void cancel() throws AccountException, OperationException {
 		currentState.cancel(this);
 	}
 

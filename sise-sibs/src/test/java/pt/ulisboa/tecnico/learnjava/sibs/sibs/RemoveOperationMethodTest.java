@@ -27,20 +27,21 @@ public class RemoveOperationMethodTest {
 	}
 
 	@Test
-	public void success() throws SibsException {
+	public void success() throws SibsException, OperationException {
 		this.sibs.removeOperation(0);
 
 		assertEquals(0, this.sibs.getNumberOfOperations());
 	}
 
 	@Test(expected = SibsException.class)
-	public void negativePosition() throws SibsException {
+	public void negativePosition() throws SibsException, OperationException {
 		this.sibs.removeOperation(-1);
 	}
 
 	@Test(expected = SibsException.class)
-	public void positionAboveLength() throws SibsException {
+	public void positionAboveLength() throws SibsException, OperationException {
 		this.sibs.removeOperation(4);
+
 	}
 
 	@After

@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.learnjava.sibs.operation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
@@ -121,7 +122,11 @@ public class TransferOperationStateMethodTest {
 		assertTrue(operation.getState() instanceof Completed);
 		assertEquals(46, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(150, services.getAccountByIban(targetIban).getBalance());
-		operation.cancel();
+		try {
+			operation.cancel();
+			fail();
+		} catch (Exception e) {
+		}
 		assertTrue(operation.getState() instanceof Completed);
 		assertFalse(operation.getState() instanceof Cancelled);
 		assertEquals(46, services.getAccountByIban(sourceIban).getBalance());

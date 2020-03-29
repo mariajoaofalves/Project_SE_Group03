@@ -89,12 +89,14 @@ public class ProcessOperationsMethodTest {
 		sibs.transfer(sourceIban, targetIban, 100);
 		TransferOperation transferOperation4 = (TransferOperation) sibs.getOperation(3);
 		assertTrue(transferOperation4.getState() instanceof Registered);
+
 		sibs.processOperations();
 		assertTrue(transferOperation4.getState() instanceof Withdrawn);
 		assertEquals(300, services.getAccountByIban(sourceIban).getBalance());
 		transferOperation4.cancel();
 		assertTrue(transferOperation4.getState() instanceof Cancelled);
 		assertEquals(400, services.getAccountByIban(sourceIban).getBalance());
+
 		sibs.processOperations();
 		assertEquals(400, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(1600, services.getAccountByIban(targetIban).getBalance());

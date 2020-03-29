@@ -1,18 +1,18 @@
 package state;
 
 import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
+import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 
 public class Cancelled implements State {
 
 	@Override
-	public void process(TransferOperation wrapper) {
-		// TODO Auto-generated method stub
-
+	public void process(TransferOperation wrapper) throws OperationException {
+		throw new OperationException("Can't process a cancelled state!");
 	}
 
 	@Override
-	public void cancel(TransferOperation wrapper) {
-		// TODO Auto-generated method stub
+	public void cancel(TransferOperation wrapper) throws OperationException {
+		throw new OperationException("Can't cancel a cancelled state!");
 
 	}
 
