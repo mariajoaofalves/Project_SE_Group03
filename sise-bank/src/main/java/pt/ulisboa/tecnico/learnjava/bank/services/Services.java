@@ -27,4 +27,12 @@ public class Services {
 		return account;
 	}
 
+	public boolean checkExistingAccount(String iban) {
+		return (getAccountByIban(iban) != null);
+	}
+
+	public boolean checkInactiveAccount(String iban) {
+		return (getAccountByIban(iban).isInactive());
+	}
+
 }

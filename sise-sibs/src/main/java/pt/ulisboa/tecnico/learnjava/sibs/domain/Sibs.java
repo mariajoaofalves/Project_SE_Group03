@@ -27,6 +27,10 @@ public class Sibs {
 		return valid;
 	}
 
+	public boolean ValidateAccount(String Iban) throws SibsException {
+		return ValidateAccountByIban(Iban);
+	}
+
 	public void transfer(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
 		if (ValidateAccountByIban(sourceIban) == true && ValidateAccountByIban(targetIban) == true) {
 			TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);

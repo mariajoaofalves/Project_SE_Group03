@@ -2,6 +2,12 @@ package pt.ulisboa.tecnico.learnjava.sibs.sibs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Before;
@@ -102,6 +108,31 @@ public class ProcessOperationsMethodTest {
 		assertEquals(1600, services.getAccountByIban(targetIban).getBalance());
 		assertTrue(transferOperation4.getState() instanceof Cancelled);
 
+	}
+
+	@Test
+	public void retryStateWithdraw() throws AccountException, SibsException, OperationException {
+		Services servicesMock = mock(Services.class);
+		Sibs sibsMock = new Sibs(3, servicesMock);
+		String sourceIban = "CKCCK1";
+		String targetIban = "CKCCK2";
+
+		when(servicesMock.checkExistingAccount(sourceIban)).thenReturn(true);
+		when(servicesMock.checkExistingAccount(targetIban)).thenReturn(true);
+//		when(servicesMock.checkInactiveAccount(sourceIban)).thenReturn(false);
+//		when(servicesMock.checkInactiveAccount(targetIban)).thenReturn(false);
+
+		doThrow(AccountException.class).when(servicesMock).withdraw(sourceIban, 100);
+
+		sibsMock.transfer(sourceIban, targetIban, 100);
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+
+		verify(servicesMock, times(3)).withdraw(sourceIban, 100);
+		verify(servicesMock, never()).deposit(targetIban, 100);
+		assertTrue(((TransferOperation) sibsMock.getOperation(0)).getState() instanceof Error);
 	}
 
 	@After
