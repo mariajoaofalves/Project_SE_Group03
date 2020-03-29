@@ -57,12 +57,12 @@ public class TransferOperationStateMethodTest {
 			throws OperationException, AccountException, SibsException, BankException, ClientException {
 		TransferOperation operation = new TransferOperation(sourceIban, targetIban, 50);
 		assertTrue(operation.getState() instanceof Registered);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Withdrawn);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Deposited);
 		assertFalse(operation.getState() instanceof Completed);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Completed);
 		assertEquals(46, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(150, services.getAccountByIban(targetIban).getBalance());
@@ -73,9 +73,9 @@ public class TransferOperationStateMethodTest {
 			throws OperationException, AccountException, SibsException, BankException, ClientException {
 		TransferOperation operation = new TransferOperation(sourceIban, target1Iban, 50);
 		assertTrue(operation.getState() instanceof Registered);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Withdrawn);
-		operation.process();
+		operation.process(services);
 		assertFalse(operation.getState() instanceof Deposited);
 		assertTrue(operation.getState() instanceof Completed);
 		assertEquals(50, services.getAccountByIban(sourceIban).getBalance());
@@ -87,9 +87,9 @@ public class TransferOperationStateMethodTest {
 																														// Bank
 		TransferOperation operation = new TransferOperation(sourceIban, targetIban, 50);
 		assertTrue(operation.getState() instanceof Registered);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Withdrawn);
-		operation.cancel();
+		operation.cancel(services);
 		assertEquals(100, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(100, services.getAccountByIban(targetIban).getBalance());
 		assertTrue(operation.getState() instanceof Cancelled);
@@ -100,11 +100,11 @@ public class TransferOperationStateMethodTest {
 																														// Bank
 		TransferOperation operation = new TransferOperation(sourceIban, targetIban, 50);
 		assertTrue(operation.getState() instanceof Registered);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Withdrawn);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Deposited);
-		operation.cancel();
+		operation.cancel(services);
 		assertEquals(100, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(100, services.getAccountByIban(targetIban).getBalance());
 		assertTrue(operation.getState() instanceof Cancelled);
@@ -115,15 +115,15 @@ public class TransferOperationStateMethodTest {
 																														// Bank
 		TransferOperation operation = new TransferOperation(sourceIban, targetIban, 50);
 		assertTrue(operation.getState() instanceof Registered);
-		operation.process();
-		operation.process();
+		operation.process(services);
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Deposited);
-		operation.process();
+		operation.process(services);
 		assertTrue(operation.getState() instanceof Completed);
 		assertEquals(46, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(150, services.getAccountByIban(targetIban).getBalance());
 		try {
-			operation.cancel();
+			operation.cancel(services);
 			fail();
 		} catch (Exception e) {
 		}

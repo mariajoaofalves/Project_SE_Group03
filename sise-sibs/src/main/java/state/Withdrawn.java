@@ -1,12 +1,13 @@
 package state;
 
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
+import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
 
 public class Withdrawn implements State {
 
 	@Override
-	public void process(TransferOperation wrapper) throws AccountException {
+	public void process(TransferOperation wrapper, Services services) throws AccountException {
 		wrapper.getServices().deposit(wrapper.getTargetIban(), wrapper.getValue());
 		if (wrapper.getSourceIban().substring(0, 3).equals(wrapper.getTargetIban().substring(0, 3))) {
 			wrapper.setState(new Completed());
@@ -17,7 +18,7 @@ public class Withdrawn implements State {
 	}
 
 	@Override
-	public void cancel(TransferOperation wrapper) throws AccountException {
+	public void cancel(TransferOperation wrapper, Services services) throws AccountException {
 		wrapper.getServices().deposit(wrapper.getSourceIban(), wrapper.getValue());
 		wrapper.setState(new Cancelled());
 	}

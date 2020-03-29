@@ -7,13 +7,11 @@ import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 public class Services {
 	public void deposit(String iban, int amount) throws AccountException {
 		Account account = getAccountByIban(iban);
-
 		account.deposit(amount);
 	}
 
 	public void withdraw(String iban, int amount) throws AccountException {
 		Account account = getAccountByIban(iban);
-
 		account.withdraw(amount);
 	}
 
@@ -27,12 +25,19 @@ public class Services {
 		return account;
 	}
 
-	public boolean checkExistingAccount(String iban) {
+	public boolean existingAccount(String iban) {
 		return (getAccountByIban(iban) != null);
 	}
 
-	public boolean checkInactiveAccount(String iban) {
-		return (getAccountByIban(iban).isInactive());
+	public boolean inactiveAccount(String iban) {
+		Account account = getAccountByIban(iban);
+		return (account.isInactive());
+	}
+
+	public boolean sameBank(String sourceIban, String targetIban) {
+		String sourceCode = sourceIban.substring(0, 3);
+		String targetCode = targetIban.substring(0, 3);
+		return (sourceCode.equals(targetCode));
 	}
 
 }

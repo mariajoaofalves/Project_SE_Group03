@@ -17,29 +17,21 @@ public class Sibs {
 		this.services = services;
 	}
 
-	public boolean ValidateAccountByIban(String Iban) throws SibsException {
-		boolean valid = false;
-		if (services.getAccountByIban(Iban) != null && (services.getAccountByIban(Iban).isInactive() == false)) {
-			valid = true;
-		} else {
+	public void validateAccountByIban(String sourceIban, String targetIban) throws SibsException {
+		if (!this.services.existingAccount(sourceIban) || !this.services.existingAccount(targetIban)
+				|| this.services.inactiveAccount(sourceIban) || this.services.inactiveAccount(targetIban)) {
 			throw new SibsException();
 		}
-		return valid;
-	}
-
-	public boolean ValidateAccount(String Iban) throws SibsException {
-		return ValidateAccountByIban(Iban);
 	}
 
 	public void transfer(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
-		if (ValidateAccountByIban(sourceIban) == true && ValidateAccountByIban(targetIban) == true) {
-			TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);
-			addOperation(transferOperation);
-		}
+		validateAccountByIban(sourceIban, targetIban);
+		TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);
+		addOperation(transferOperation);
 	}
 
-	public void payment(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
-		if (ValidateAccountByIban(sourceIban) == true && ValidateAccountByIban(targetIban) == true) {
+	public void payment(String targetIban, int amount) throws SibsException, OperationException {
+		if (services.existingAccount(targetIban) == true && services.inactiveAccount(targetIban) == false) {
 			PaymentOperation paymentOperation = new PaymentOperation(targetIban, amount);
 			addOperation(paymentOperation);
 		}
@@ -67,9 +59,11 @@ public class Sibs {
 				TransferOperation transferOperation = (TransferOperation) operation;
 				if (verifyState(transferOperation)) {
 					try {
-						transferOperation.process();
+						transferOperation.process(services);
 					} catch (Exception e) {
-						(new Retry()).process(transferOperation);
+						if (!(transferOperation.getState() instanceof Retry)) {
+							(new Retry()).process(transferOperation, services);
+						}
 					}
 				}
 			}
@@ -89,7 +83,7 @@ public class Sibs {
 		if (getOperation(id) != null && getOperation(id) instanceof TransferOperation) {
 			TransferOperation transferOperation = (TransferOperation) getOperation(id);
 			if (verifyState(transferOperation)) {
-				transferOperation.cancel();
+				transferOperation.cancel(services);
 			}
 		} else {
 			throw new OperationException("Null Position or Operation is not type Transfer");

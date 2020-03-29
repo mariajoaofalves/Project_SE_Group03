@@ -26,7 +26,7 @@ public class TransferOperation extends Operation {
 		this.targetIban = targetIban;
 		this.value = value;
 		this.services = new Services();
-		currentState = new Registered();
+		this.currentState = new Registered();
 
 	}
 
@@ -61,15 +61,15 @@ public class TransferOperation extends Operation {
 	}
 
 	public void setState(State state) {
-		currentState = state;
+		this.currentState = state;
 	}
 
-	public void process() throws AccountException, OperationException {
-		currentState.process(this);
+	public void process(Services services) throws AccountException, OperationException {
+		this.currentState.process(this, services);
 	}
 
-	public void cancel() throws AccountException, OperationException {
-		currentState.cancel(this);
+	public void cancel(Services services) throws AccountException, OperationException {
+		this.currentState.cancel(this, services);
 	}
 
 }

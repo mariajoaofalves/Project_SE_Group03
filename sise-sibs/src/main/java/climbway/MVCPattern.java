@@ -64,6 +64,7 @@ public class MVCPattern {
 		String Iban14 = bank.createAccount(Bank.AccountType.CHECKING, client14, 100, 0);
 		String Iban15 = bank.createAccount(Bank.AccountType.CHECKING, client15, 100, 0);
 		String Iban16 = bank.createAccount(Bank.AccountType.CHECKING, client16, 100, 0);
+		System.out.println(Iban1);
 
 		Account account1 = services.getAccountByIban(Iban1);
 		Account account2 = services.getAccountByIban(Iban2);
