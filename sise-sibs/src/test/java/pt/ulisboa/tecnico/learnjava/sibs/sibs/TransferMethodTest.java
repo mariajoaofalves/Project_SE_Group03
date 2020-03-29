@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.learnjava.sibs.sibs;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import org.junit.After;
 import org.junit.Before;
@@ -49,26 +48,12 @@ public class TransferMethodTest {
 
 		this.sibs.transfer(sourceIban, targetIban, 100);
 
-		assertEquals(900, this.services.getAccountByIban(sourceIban).getBalance());
-		assertEquals(1100, this.services.getAccountByIban(targetIban).getBalance());
+		assertEquals(1000, this.services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1000, this.services.getAccountByIban(targetIban).getBalance());
 		assertEquals(1, this.sibs.getNumberOfOperations());
 		assertEquals(100, this.sibs.getTotalValueOfOperations());
 		assertEquals(100, this.sibs.getTotalValueOfOperationsForType(Operation.OPERATION_TRANSFER));
 		assertEquals(0, this.sibs.getTotalValueOfOperationsForType(Operation.OPERATION_PAYMENT));
-	}
-
-	@Test
-	public void successMockito()
-			throws BankException, AccountException, ClientException, SibsException, OperationException {
-		Services serviceMock = mock(Services.class);
-		this.sibs = new Sibs(100, serviceMock);
-
-		String sourceIban = this.sourceBank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 1000, 0);
-		String targetIban = this.targetBank.createAccount(Bank.AccountType.CHECKING, this.targetClient, 1000, 0);
-
-		this.sibs.transfer(sourceIban, targetIban, 100);
-
-		assertEquals(1, this.sibs.getNumberOfOperations());
 	}
 
 	@After

@@ -4,6 +4,8 @@ import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.services.Services;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
+import state.Cancelled;
+import state.Completed;
 
 public class Sibs {
 	final Operation[] operations;
@@ -14,17 +16,31 @@ public class Sibs {
 		this.services = services;
 	}
 
-	public void transfer(String sourceIban, String targetIban, int amount)
-			throws SibsException, AccountException, OperationException {
-		if ((services.getAccountByIban(targetIban) != null) && (services.getAccountByIban(sourceIban) != null)) {
-			addOperation(Operation.OPERATION_TRANSFER, sourceIban, targetIban, amount);
+	public boolean ValidateAccountByIban(String Iban) throws SibsException {
+		boolean valid = false;
+		if (services.getAccountByIban(Iban) != null && (services.getAccountByIban(Iban).isInactive() == false)) {
+			valid = true;
 		} else {
 			throw new SibsException();
 		}
+		return valid;
 	}
 
-	public int addOperation(String type, String sourceIban, String targetIban, int value)
-			throws OperationException, SibsException {
+	public void transfer(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
+		if (ValidateAccountByIban(sourceIban) == true && ValidateAccountByIban(targetIban) == true) {
+			TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);
+			addOperation(transferOperation);
+		}
+	}
+
+	public void payment(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
+		if (ValidateAccountByIban(sourceIban) == true && ValidateAccountByIban(targetIban) == true) {
+			PaymentOperation paymentOperation = new PaymentOperation(targetIban, amount);
+			addOperation(paymentOperation);
+		}
+	}
+
+	public int addOperation(Operation operation) throws OperationException, SibsException {
 		int position = -1;
 		for (int i = 0; i < this.operations.length; i++) {
 			if (this.operations[i] == null) {
@@ -32,20 +48,46 @@ public class Sibs {
 				break;
 			}
 		}
-
 		if (position == -1) {
 			throw new SibsException();
 		}
 
-		Operation operation;
-		if (type.equals(Operation.OPERATION_TRANSFER)) {
-			operation = new TransferOperation(sourceIban, targetIban, value);
-		} else {
-			operation = new PaymentOperation(targetIban, value);
-		}
-
 		this.operations[position] = operation;
 		return position;
+	}
+
+	public void processOperations() throws AccountException {
+		for (Operation operation : this.operations) {
+			if (operation != null && operation instanceof TransferOperation) {
+				TransferOperation transferOperation = (TransferOperation) operation;
+				if (verifyState(transferOperation)) {
+					transferOperation.process();
+				}
+
+			}
+		}
+
+	}
+
+	public boolean verifyState(TransferOperation transferOperation) {
+		boolean valid = true;
+		if ((transferOperation.getState() instanceof Cancelled)
+				|| (transferOperation.getState() instanceof Completed)) {
+			valid = false;
+		}
+		return valid;
+	}
+
+	public void cancelOperation(int id) throws SibsException, AccountException {
+		if (getOperation(id) != null && getOperation(id) instanceof TransferOperation) {
+			TransferOperation transferOperation = (TransferOperation) getOperation(id);
+			if (verifyState(transferOperation)) {
+				transferOperation.cancel();
+			}
+		} else {
+			throw new SibsException();
+		}
+
 	}
 
 	public void removeOperation(int position) throws SibsException {
