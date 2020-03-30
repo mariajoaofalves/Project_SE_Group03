@@ -6,39 +6,38 @@ import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 
 public class Retry implements State {
-	private int retries = 3;
-	private State previewState = null;
+	private int attempts = 3;
+	private State previousState = null;
 
 	@Override
 	public void process(TransferOperation wrapper, Services services) throws AccountException, OperationException {
 
 		if (!(wrapper.getState() instanceof Retry)) {
-			this.previewState = wrapper.getState();
+			this.previousState = wrapper.getState();
 			wrapper.setState(this);
 		} else {
 
-			if (retries > 0) {
-				retryAgain(wrapper, services);
+			if (attempts > 0) {
+				keepTrying(wrapper, services);
 			} else {
-				this.previewState.cancel(wrapper, services);
+				this.previousState.cancel(wrapper, services);
 				wrapper.setState(new Error());
 			}
 		}
-		this.retries -= 1;
+		this.attempts -= 1;
 	}
 
 	@Override
 	public void cancel(TransferOperation wrapper, Services services) throws AccountException, OperationException {
-		this.previewState.cancel(wrapper, services);
+		this.previousState.cancel(wrapper, services);
 	}
 
-	public void retryAgain(TransferOperation wrapper, Services services) {
+	public void keepTrying(TransferOperation wrapper, Services services) {
 		try {
-			this.previewState.process(wrapper, services);
+			this.previousState.process(wrapper, services);
 		} catch (Exception e) {
 			//
 		}
 	}
 
 }
-//Dia 29

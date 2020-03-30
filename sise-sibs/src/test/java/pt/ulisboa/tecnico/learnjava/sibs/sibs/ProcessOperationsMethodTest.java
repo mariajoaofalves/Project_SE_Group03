@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
 import state.Cancelled;
 import state.Completed;
+import state.Deposited;
 import state.Registered;
 import state.Withdrawn;
 
@@ -31,11 +32,14 @@ public class ProcessOperationsMethodTest {
 
 	private Sibs sibs;
 	private Bank bank;
+	private Bank targetBank;
 	private Client sourceClient;
 	private Client targetClient;
+	private Client targetClient1;
 	private Services services;
 	private String sourceIban;
 	private String targetIban;
+	private String targetIban1;
 
 	@Before
 	public void setUp() throws OperationException, SibsException, BankException, ClientException, AccountException {
@@ -43,15 +47,19 @@ public class ProcessOperationsMethodTest {
 		this.services = new Services();
 		this.sibs = new Sibs(100, this.services);
 		this.bank = new Bank("CGD");
+		this.targetBank = new Bank("BPI");
 		this.sourceClient = new Client(this.bank, FIRST_NAME, LAST_NAME, "123456789", PHONE_NUMBER, ADDRESS, 33);
 		this.targetClient = new Client(this.bank, FIRST_NAME, LAST_NAME, "123456780", PHONE_NUMBER, ADDRESS, 22);
+		this.targetClient1 = new Client(this.targetBank, FIRST_NAME, LAST_NAME, "123333222", PHONE_NUMBER, ADDRESS, 22);
 
 		this.sourceIban = this.bank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 1000, 0);
 		this.targetIban = this.bank.createAccount(Bank.AccountType.CHECKING, this.targetClient, 1000, 0);
+		this.targetIban1 = this.targetBank.createAccount(Bank.AccountType.CHECKING, this.targetClient1, 1000, 0);
+
 	}
 
 	@Test
-	public void success() throws OperationException, SibsException, AccountException {
+	public void successSameBank() throws OperationException, SibsException, AccountException {
 
 		sibs.transfer(sourceIban, targetIban, 100);
 		TransferOperation transferOperation1 = (TransferOperation) sibs.getOperation(0);
@@ -102,6 +110,23 @@ public class ProcessOperationsMethodTest {
 		assertEquals(1600, services.getAccountByIban(targetIban).getBalance());
 		assertTrue(transferOperation4.getState() instanceof Cancelled);
 
+	}
+
+	@Test
+	public void succesDiferentBanks() throws SibsException, OperationException, AccountException {
+		sibs.transfer(sourceIban, targetIban1, 50);
+		TransferOperation transferOperation = (TransferOperation) sibs.getOperation(0);
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Withdrawn);
+		assertEquals(950, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1000, services.getAccountByIban(targetIban1).getBalance());
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Deposited);
+		assertEquals(950, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1050, services.getAccountByIban(targetIban1).getBalance());
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Completed);
+		assertEquals(946, services.getAccountByIban(sourceIban).getBalance());
 	}
 
 	@After

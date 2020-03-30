@@ -17,23 +17,28 @@ public class Sibs {
 		this.services = services;
 	}
 
-	public void validateAccountByIban(String iban) throws SibsException {
-		if (!this.services.existingAccount(iban) || !this.services.existingAccount(iban)) {
+	public boolean validateAccountByIban(String iban) throws SibsException {
+		boolean valid = false;
+		if (this.services.existingAccount(iban) && !this.services.inactiveAccount(iban)) {
+			valid = true;
+		} else {
 			throw new SibsException();
 		}
+		return valid;
 	}
 
 	public void transfer(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
-		validateAccountByIban(sourceIban);
-		validateAccountByIban(targetIban);
-		TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);
-		addOperation(transferOperation);
+		if (validateAccountByIban(sourceIban) && validateAccountByIban(targetIban)) {
+			TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);
+			addOperation(transferOperation);
+		}
 	}
 
 	public void payment(String targetIban, int amount) throws SibsException, OperationException {
-		validateAccountByIban(targetIban);
-		PaymentOperation paymentOperation = new PaymentOperation(targetIban, amount);
-		addOperation(paymentOperation);
+		if (validateAccountByIban(targetIban)) {
+			PaymentOperation paymentOperation = new PaymentOperation(targetIban, amount);
+			addOperation(paymentOperation);
+		}
 	}
 
 	public int addOperation(Operation operation) throws OperationException, SibsException {
@@ -134,4 +139,3 @@ public class Sibs {
 		return result;
 	}
 }
-//Dia 29
