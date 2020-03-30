@@ -18,13 +18,12 @@ import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
-import state.Completed;
-import state.Registered;
+import state.Error;
 
 public class RetryMockitoTest {
 
 	@Test
-	public void retryStateWithdraw() throws AccountException, SibsException, OperationException {
+	public void retryStateWithdrawn() throws AccountException, SibsException, OperationException {
 		Services servicesMock = mock(Services.class);
 		Sibs sibsMock = new Sibs(3, servicesMock);
 		String sourceIban = "CGCCK1";
@@ -47,11 +46,34 @@ public class RetryMockitoTest {
 		assertTrue(((TransferOperation) sibsMock.getOperation(0)).getState() instanceof Error);
 	}
 
+	@Test
+	public void retryStateDeposited() throws AccountException, SibsException, OperationException {
+		Services servicesMock = mock(Services.class);
+		Sibs sibsMock = new Sibs(3, servicesMock);
+		String sourceIban = "CGCCK1";
+		String targetIban = "CGCCK2";
+
+		when(servicesMock.existingAccount(sourceIban)).thenReturn(true);
+		when(servicesMock.existingAccount(targetIban)).thenReturn(true);
+		when(servicesMock.sameBank(sourceIban, targetIban)).thenReturn(true);
+
+		doThrow(AccountException.class).when(servicesMock).deposit(targetIban, 100);
+
+		sibsMock.transfer(sourceIban, targetIban, 100);
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+		sibsMock.processOperations();
+
+		verify(servicesMock, times(1)).withdraw(sourceIban, 100);
+		verify(servicesMock, times(3)).deposit(targetIban, 100);
+		assertTrue(((TransferOperation) sibsMock.getOperation(0)).getState() instanceof Error);
+	}
+
 	@After
 	public void tearDown() {
 		Bank.clearBanks();
 	}
 
 }
-
-//Dia 29

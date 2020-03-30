@@ -17,24 +17,23 @@ public class Sibs {
 		this.services = services;
 	}
 
-	public void validateAccountByIban(String sourceIban, String targetIban) throws SibsException {
-		if (!this.services.existingAccount(sourceIban) || !this.services.existingAccount(targetIban)
-				|| this.services.inactiveAccount(sourceIban) || this.services.inactiveAccount(targetIban)) {
+	public void validateAccountByIban(String iban) throws SibsException {
+		if (!this.services.existingAccount(iban) || !this.services.existingAccount(iban)) {
 			throw new SibsException();
 		}
 	}
 
 	public void transfer(String sourceIban, String targetIban, int amount) throws SibsException, OperationException {
-		validateAccountByIban(sourceIban, targetIban);
+		validateAccountByIban(sourceIban);
+		validateAccountByIban(targetIban);
 		TransferOperation transferOperation = new TransferOperation(sourceIban, targetIban, amount);
 		addOperation(transferOperation);
 	}
 
 	public void payment(String targetIban, int amount) throws SibsException, OperationException {
-		if (services.existingAccount(targetIban) == true && services.inactiveAccount(targetIban) == false) {
-			PaymentOperation paymentOperation = new PaymentOperation(targetIban, amount);
-			addOperation(paymentOperation);
-		}
+		validateAccountByIban(targetIban);
+		PaymentOperation paymentOperation = new PaymentOperation(targetIban, amount);
+		addOperation(paymentOperation);
 	}
 
 	public int addOperation(Operation operation) throws OperationException, SibsException {
