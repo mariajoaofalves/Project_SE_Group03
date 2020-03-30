@@ -9,7 +9,6 @@ import state.State;
 public class TransferOperation extends Operation {
 
 	Services services;
-	State state;
 
 	private String sourceIban;
 	private String targetIban;

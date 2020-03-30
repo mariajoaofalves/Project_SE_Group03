@@ -8,7 +8,7 @@ public class Registered implements State {
 
 	@Override
 	public void process(TransferOperation wrapper, Services services) throws AccountException {
-		wrapper.getServices().withdraw(wrapper.getSourceIban(), wrapper.getValue());
+		services.withdraw(wrapper.getSourceIban(), wrapper.getValue());
 		wrapper.setState(new Withdrawn());
 	}
 

@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 
 public class Retry implements State {
 	private int retries = 3;
-	private State previewState;
+	private State previewState = null;
 
 	@Override
 	public void process(TransferOperation wrapper, Services services) throws AccountException, OperationException {

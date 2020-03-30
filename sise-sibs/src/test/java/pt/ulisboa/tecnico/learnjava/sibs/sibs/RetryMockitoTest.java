@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.learnjava.sibs.domain.Sibs;
 import pt.ulisboa.tecnico.learnjava.sibs.domain.TransferOperation;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.OperationException;
 import pt.ulisboa.tecnico.learnjava.sibs.exceptions.SibsException;
+import state.Completed;
 import state.Registered;
 
 public class RetryMockitoTest {
@@ -41,9 +42,9 @@ public class RetryMockitoTest {
 		sibsMock.processOperations();
 		sibsMock.processOperations();
 
-		verify(servicesMock, times(0)).withdraw(sourceIban, 100);
+		verify(servicesMock, times(3)).withdraw(sourceIban, 100);
 		verify(servicesMock, never()).deposit(targetIban, 100);
-		assertTrue(((TransferOperation) sibsMock.getOperation(0)).getState() instanceof Registered);
+		assertTrue(((TransferOperation) sibsMock.getOperation(0)).getState() instanceof Error);
 	}
 
 	@After

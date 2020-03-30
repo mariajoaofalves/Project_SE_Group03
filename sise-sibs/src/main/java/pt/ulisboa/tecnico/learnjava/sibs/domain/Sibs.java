@@ -55,7 +55,7 @@ public class Sibs {
 
 	public void processOperations() throws AccountException, OperationException {
 		for (Operation operation : this.operations) {
-			if (operation != null && operation instanceof TransferOperation) {
+			if (operation != null && (operation instanceof TransferOperation)) {
 				TransferOperation transferOperation = (TransferOperation) operation;
 				if (verifyState(transferOperation)) {
 					try {
