@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
@@ -19,8 +20,9 @@ public class GetTotalBalanceMethodTest {
 	@Before
 	public void setUp() throws BankException, AccountException, ClientException {
 		this.bank = new Bank("CGD");
+		Person person = new Person("Joao", "Manuel", "Street", "987654321");
 
-		this.client = new Client(this.bank, "José", "Manuel", "123456789", "987654321", "Street", 33);
+		this.client = new Client(this.bank, person, "123456789", 33);
 	}
 
 	@Test

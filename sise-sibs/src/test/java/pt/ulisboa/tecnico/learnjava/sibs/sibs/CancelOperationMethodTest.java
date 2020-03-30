@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
@@ -48,9 +49,12 @@ public class CancelOperationMethodTest {
 		this.sibs = new Sibs(100, this.services);
 		this.bank = new Bank("CGD");
 		this.targetBank = new Bank("BPI");
-		this.sourceClient = new Client(this.bank, FIRST_NAME, LAST_NAME, "123456789", PHONE_NUMBER, ADDRESS, 33);
-		this.targetClient = new Client(this.bank, FIRST_NAME, LAST_NAME, "123456780", PHONE_NUMBER, ADDRESS, 22);
-		this.targetClient1 = new Client(this.targetBank, FIRST_NAME, LAST_NAME, "123456000", PHONE_NUMBER, ADDRESS, 22);
+		Person personSource = new Person(FIRST_NAME, LAST_NAME, ADDRESS, PHONE_NUMBER);
+		this.sourceClient = new Client(this.bank, personSource, "123456789", 33);
+
+		Person personTarget = new Person(FIRST_NAME, LAST_NAME, ADDRESS, PHONE_NUMBER);
+		this.targetClient = new Client(this.bank, personTarget, "123456780", 22);
+		this.targetClient1 = new Client(this.targetBank, personTarget, "123456000", 22);
 
 		this.sourceIban = this.bank.createAccount(Bank.AccountType.CHECKING, this.sourceClient, 1000, 0);
 		this.targetIban = this.bank.createAccount(Bank.AccountType.CHECKING, this.targetClient, 1000, 0);

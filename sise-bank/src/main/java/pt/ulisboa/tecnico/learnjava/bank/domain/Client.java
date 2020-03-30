@@ -12,38 +12,27 @@ public class Client {
 	private final Set<Account> accounts = new HashSet<Account>();
 
 	private final Bank bank;
-	private final String firstName;
-	private final String lastName;
 	private final String nif;
-	private final String phoneNumber;
-	private final String address;
 	private int age;
+	private final Person person;
 
-	public Client(Bank bank, String firstName, String lastName, String nif, String phoneNumber, String address, int age)
-			throws ClientException {
-		checkParameters(bank, nif, phoneNumber, age);
+	public Client(Bank bank, Person person, String nif, int age) throws ClientException {
+		checkParameters(bank, nif, age);
 
 		this.bank = bank;
-		this.firstName = firstName;
-		this.lastName = lastName;
 		this.nif = nif;
-		this.phoneNumber = phoneNumber;
-		this.address = address;
 		this.age = age;
+		this.person = person;
 
 		bank.addClient(this);
 	}
 
-	private void checkParameters(Bank bank, String nif, String phoneNumber, int age) throws ClientException {
+	private void checkParameters(Bank bank, String nif, int age) throws ClientException {
 		if (age < 0) {
 			throw new ClientException();
 		}
 
 		if (nif.length() != 9 || !nif.matches("[0-9]+")) {
-			throw new ClientException();
-		}
-
-		if (phoneNumber.length() != 9 || !phoneNumber.matches("[0-9]+")) {
 			throw new ClientException();
 		}
 
@@ -100,24 +89,8 @@ public class Client {
 		return this.bank;
 	}
 
-	public String getFirstName() {
-		return this.firstName;
-	}
-
-	public String getLastName() {
-		return this.lastName;
-	}
-
 	public String getNif() {
 		return this.nif;
-	}
-
-	public String getPhoneNumber() {
-		return this.phoneNumber;
-	}
-
-	public String getAddress() {
-		return this.address;
 	}
 
 	public int getAge() {
@@ -126,6 +99,10 @@ public class Client {
 
 	public void setAge(int age) {
 		this.age = age;
+	}
+
+	public Person getPerson() {
+		return this.person;
 	}
 
 }

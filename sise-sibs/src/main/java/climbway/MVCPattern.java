@@ -5,6 +5,7 @@ import java.util.Scanner;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Account;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Bank;
 import pt.ulisboa.tecnico.learnjava.bank.domain.Client;
+import pt.ulisboa.tecnico.learnjava.bank.domain.Person;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.AccountException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.BankException;
 import pt.ulisboa.tecnico.learnjava.bank.exceptions.ClientException;
@@ -30,11 +31,20 @@ public class MVCPattern {
 
 		Bank bank = new Bank("CGC");
 
-		Client client1 = new Client(bank, "Maria", "Alves", "123456789", "967440681", "Street", 33);
-		Client client2 = new Client(bank, "João", "Alves", "123456788", "966906844", "Street", 33);
-		Client client3 = new Client(bank, "Pedro", "Casaleiro", "123456787", "964391860", "Street", 33);
-		Client client4 = new Client(bank, "Patrícia", "Matos", "123456700", "927338098", "Street", 33);
-		Client client5 = new Client(bank, "Ana", "Pinto", "123456000", "967440682", "Street", 33);
+		Person person1 = new Person("Maria", "Alves", "Street", "967440681");
+		Client client1 = new Client(bank, person1, "123456789", 33);
+
+		Person person2 = new Person("João", "Alves", "Street", "966906844");
+		Client client2 = new Client(bank, person2, "123456788", 33);
+
+		Person person3 = new Person("Pedro", "Casaleiro", "Street", "964391860");
+		Client client3 = new Client(bank, person3, "123456787", 33);
+
+		Person person4 = new Person("Patrícia", "Matos", "Street", "927338098");
+		Client client4 = new Client(bank, person4, "123456700", 33);
+
+		Person person5 = new Person("Ana", "Pinto", "Street", "967440682");
+		Client client5 = new Client(bank, person5, "123456000", 33);
 
 		String Iban1 = bank.createAccount(Bank.AccountType.CHECKING, client1, 100, 0);
 		String Iban2 = bank.createAccount(Bank.AccountType.CHECKING, client2, 100, 0);
