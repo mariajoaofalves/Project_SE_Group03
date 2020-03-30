@@ -9,7 +9,7 @@ public class Withdrawn implements State {
 	@Override
 	public void process(TransferOperation wrapper, Services services) throws AccountException {
 		services.deposit(wrapper.getTargetIban(), wrapper.getValue());
-		if (wrapper.getSourceIban().substring(0, 3).equals(wrapper.getTargetIban().substring(0, 3))) {
+		if (services.sameBank(wrapper.getSourceIban(), wrapper.getTargetIban())) {
 			wrapper.setState(new Completed());
 		} else {
 			wrapper.setState(new Deposited());

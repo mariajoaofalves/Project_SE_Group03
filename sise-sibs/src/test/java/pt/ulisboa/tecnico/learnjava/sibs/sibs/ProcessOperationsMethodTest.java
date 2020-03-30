@@ -63,20 +63,51 @@ public class ProcessOperationsMethodTest {
 
 	@Test
 	public void successSameBank() throws OperationException, SibsException, AccountException {
+		sibs.transfer(sourceIban, targetIban, 100);
+		TransferOperation transferOperation = (TransferOperation) sibs.getOperation(0);
+		assertTrue(transferOperation.getState() instanceof Registered);
+
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Withdrawn);
+		assertEquals(900, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1000, services.getAccountByIban(targetIban).getBalance());
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Completed);
+		assertEquals(900, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1100, services.getAccountByIban(targetIban).getBalance());
+
+	}
+
+	@Test
+	public void successDiferentBanks() throws SibsException, OperationException, AccountException {
+		sibs.transfer(sourceIban, targetIban1, 50);
+		TransferOperation transferOperation = (TransferOperation) sibs.getOperation(0);
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Withdrawn);
+		assertEquals(950, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1000, services.getAccountByIban(targetIban1).getBalance());
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Deposited);
+		assertEquals(950, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1050, services.getAccountByIban(targetIban1).getBalance());
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Completed);
+		assertEquals(946, services.getAccountByIban(sourceIban).getBalance());
+	}
+
+	@Test
+	public void successSameBank3Operations() throws OperationException, SibsException, AccountException {
 
 		sibs.transfer(sourceIban, targetIban, 100);
 		TransferOperation transferOperation1 = (TransferOperation) sibs.getOperation(0);
-		assertTrue(transferOperation1.getState() instanceof Registered);
-
 		sibs.processOperations();
-		assertTrue(transferOperation1.getState() instanceof Withdrawn);
-		assertEquals(900, services.getAccountByIban(sourceIban).getBalance());
-		assertEquals(1000, services.getAccountByIban(targetIban).getBalance());
 		sibs.transfer(sourceIban, targetIban, 200);
 		TransferOperation transferOperation2 = (TransferOperation) sibs.getOperation(1);
 		sibs.transfer(sourceIban, targetIban, 300);
-		assertEquals(3, this.sibs.getNumberOfOperations());
 		TransferOperation transferOperation3 = (TransferOperation) sibs.getOperation(2);
+
+		assertEquals(3, this.sibs.getNumberOfOperations());
+		assertTrue(transferOperation1.getState() instanceof Withdrawn);
 		assertTrue(transferOperation2.getState() instanceof Registered);
 		assertTrue(transferOperation3.getState() instanceof Registered);
 
@@ -96,40 +127,51 @@ public class ProcessOperationsMethodTest {
 		assertEquals(600, this.sibs.getTotalValueOfOperations());
 		assertEquals(600, this.sibs.getTotalValueOfOperationsForType(Operation.OPERATION_TRANSFER));
 		assertEquals(0, this.sibs.getTotalValueOfOperationsForType(Operation.OPERATION_PAYMENT));
-
-		sibs.transfer(sourceIban, targetIban, 100);
-		TransferOperation transferOperation4 = (TransferOperation) sibs.getOperation(3);
-		assertTrue(transferOperation4.getState() instanceof Registered);
-
-		sibs.processOperations();
-		assertTrue(transferOperation4.getState() instanceof Withdrawn);
-		assertEquals(300, services.getAccountByIban(sourceIban).getBalance());
-		transferOperation4.cancel(services);
-		assertTrue(transferOperation4.getState() instanceof Cancelled);
-		assertEquals(400, services.getAccountByIban(sourceIban).getBalance());
-
-		sibs.processOperations();
-		assertEquals(400, services.getAccountByIban(sourceIban).getBalance());
-		assertEquals(1600, services.getAccountByIban(targetIban).getBalance());
-		assertTrue(transferOperation4.getState() instanceof Cancelled);
-
 	}
 
 	@Test
-	public void succesDiferentBanks() throws SibsException, OperationException, AccountException {
+	public void successSameBankCancelWithdrawnState() throws OperationException, SibsException, AccountException {
+		sibs.transfer(sourceIban, targetIban, 100);
+		TransferOperation transferOperation = (TransferOperation) sibs.getOperation(0);
+		assertTrue(transferOperation.getState() instanceof Registered);
+
+		sibs.processOperations();
+		assertTrue(transferOperation.getState() instanceof Withdrawn);
+		assertEquals(900, services.getAccountByIban(sourceIban).getBalance());
+		transferOperation.cancel(services);
+		assertTrue(transferOperation.getState() instanceof Cancelled);
+		assertEquals(1000, services.getAccountByIban(sourceIban).getBalance());
+
+		sibs.processOperations();
+		assertEquals(1000, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1000, services.getAccountByIban(targetIban).getBalance());
+		assertTrue(transferOperation.getState() instanceof Cancelled);
+	}
+
+	@Test
+	public void successDifferentBanksCancelDepositedState() throws OperationException, SibsException, AccountException {
+
 		sibs.transfer(sourceIban, targetIban1, 50);
 		TransferOperation transferOperation = (TransferOperation) sibs.getOperation(0);
+
 		sibs.processOperations();
 		assertTrue(transferOperation.getState() instanceof Withdrawn);
 		assertEquals(950, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(1000, services.getAccountByIban(targetIban1).getBalance());
+
 		sibs.processOperations();
 		assertTrue(transferOperation.getState() instanceof Deposited);
 		assertEquals(950, services.getAccountByIban(sourceIban).getBalance());
 		assertEquals(1050, services.getAccountByIban(targetIban1).getBalance());
+
+		transferOperation.cancel(services);
+
+		assertTrue(transferOperation.getState() instanceof Cancelled);
+		assertEquals(1000, services.getAccountByIban(sourceIban).getBalance());
+		assertEquals(1000, services.getAccountByIban(targetIban1).getBalance());
+
 		sibs.processOperations();
-		assertTrue(transferOperation.getState() instanceof Completed);
-		assertEquals(946, services.getAccountByIban(sourceIban).getBalance());
+		assertTrue(transferOperation.getState() instanceof Cancelled);
 	}
 
 	@After

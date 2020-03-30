@@ -25,7 +25,6 @@ public class ComissionMockitoTest {
 
 	private Sibs sibs;;
 
-	// P1: Alinea 4
 	@Test
 	public void successSameBank() throws SibsException, OperationException, AccountException {
 		Services serviceMock = mock(Services.class);
@@ -53,7 +52,6 @@ public class ComissionMockitoTest {
 		assertEquals(0, sibsMock.getTotalValueOfOperationsForType(Operation.OPERATION_PAYMENT));
 	}
 
-	// P1: Alinea 5
 	@Test
 	public void successDiferentBanks() throws AccountException, SibsException, OperationException {
 		Services serviceMock = mock(Services.class);
@@ -82,25 +80,6 @@ public class ComissionMockitoTest {
 		assertEquals(50, sibsMock.getTotalValueOfOperationsForType(Operation.OPERATION_TRANSFER));
 		assertEquals(0, sibsMock.getTotalValueOfOperationsForType(Operation.OPERATION_PAYMENT));
 
-	}
-
-	// P1:FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	@Test
-	public void failTransferMockitoTest() throws SibsException, OperationException {
-		Services serviceMock = mock(Services.class);
-		String sourceIban = "CGCCK1";
-		String targetIban2 = "BCPCK3";
-		this.sibs = new Sibs(100, serviceMock);
-
-		when(serviceMock.existingAccount(sourceIban)).thenReturn(true);
-		when(serviceMock.existingAccount(targetIban2)).thenReturn(true);
-
-		this.sibs.transfer(sourceIban, targetIban2, 100);
-
-		assertEquals(1, this.sibs.getNumberOfOperations());
-		assertEquals(100, this.sibs.getTotalValueOfOperations());
-		assertEquals(100, this.sibs.getTotalValueOfOperationsForType(Operation.OPERATION_TRANSFER));
-		assertEquals(0, this.sibs.getTotalValueOfOperationsForType(Operation.OPERATION_PAYMENT));
 	}
 
 	@After
