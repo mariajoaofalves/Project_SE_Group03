@@ -67,6 +67,7 @@ public class Sibs {
 					} catch (Exception e) {
 						if (!(transferOperation.getState() instanceof Retry)) {
 							(new Retry()).process(transferOperation, services);
+							System.out.println("Transfer Operation failed.The Operation Enters on Retry State");
 						}
 					}
 				}
