@@ -23,8 +23,6 @@ import state.Deposited;
 
 public class ComissionMockitoTest {
 
-	private Sibs sibs;;
-
 	@Test
 	public void successSameBank() throws SibsException, OperationException, AccountException {
 		Services serviceMock = mock(Services.class);
@@ -74,12 +72,10 @@ public class ComissionMockitoTest {
 		verify(serviceMock, times(1)).deposit(targetIban2, 50);
 		verify(serviceMock, times(1)).withdraw(sourceIban, 4);
 
-		assertEquals(46, serviceMock.getAccountByIban(sourceIban).getBalance());
 		assertEquals(1, sibsMock.getNumberOfOperations());
-		assertEquals(54, sibsMock.getTotalValueOfOperations());
+		assertEquals(50, sibsMock.getTotalValueOfOperations());
 		assertEquals(50, sibsMock.getTotalValueOfOperationsForType(Operation.OPERATION_TRANSFER));
 		assertEquals(0, sibsMock.getTotalValueOfOperationsForType(Operation.OPERATION_PAYMENT));
-
 	}
 
 	@After
